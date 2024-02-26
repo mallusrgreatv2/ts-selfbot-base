@@ -1,5 +1,5 @@
 import { Client, Collection } from "discord.js-selfbot-v13";
-import { generateErrorMessage } from "zod-error";
+import { fromZodError } from "zod-validation-error";
 import { CommandParser, EnvTokenParser } from "../parsers.js";
 import Logger from "./logger.js";
 import { z } from "zod";
@@ -22,7 +22,7 @@ export default class Selfbot extends Client {
     const parsed = EnvTokenParser.safeParse(token);
     if (!parsed.success) {
       this.logger.error(
-        `Issues detected in token: ${generateErrorMessage(parsed.error.issues)}`
+        `Issues detected in token: ${fromZodError(parsed.error)}`
       );
       process.exit();
     }

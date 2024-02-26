@@ -1,6 +1,6 @@
 import "dotenv/config";
 
-import { generateErrorMessage } from "zod-error";
+import { fromZodError } from "zod-validation-error";
 import { CommandParser, EventParser } from "./parsers.js";
 import Selfbot from "./structures/client.js";
 import Handler from "./structures/handler.js";
@@ -14,17 +14,7 @@ new Handler({
     const parsed = CommandParser.safeParse(cmd);
     if (!parsed.success) {
       client.logger.error(
-        `Issues detected in command ${dir}: ${generateErrorMessage(
-          parsed.error.issues,
-          {
-            delimiter: {
-              component: " | ",
-            },
-            path: {
-              enabled: false,
-            },
-          }
-        )}`
+        `Issues detected in command ${dir}: ${fromZodError(parsed.error)}`
       );
       return;
     }
@@ -40,7 +30,7 @@ new Handler({
     const parsed = EventParser.safeParse(cmd);
     if (!parsed.success) {
       client.logger.error(
-        `Issues detected in event: ${generateErrorMessage(parsed.error.issues)}`
+        `Issues detected in event: ${fromZodError(parsed.error)}`
       );
       return;
     }
